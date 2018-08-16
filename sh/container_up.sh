@@ -4,22 +4,45 @@ set -e
 readonly MY_DIR="$( cd "$( dirname "${0}" )" && pwd )"
 source ${MY_DIR}/env-vars.sh
 
+readonly IP=${1:-localhost}
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-wait_till_up() # $1==container_name
+wait_till_container_is_up()
 {
+  local name=${APP_CONTAINER}
   local n=10
   while [ $(( n -= 1 )) -ge 0 ]
   do
-    if docker ps --filter status=running --format '{{.Names}}' | grep -q ^${1}$ ; then
-      echo "Up on port ${APP_PORT}"
+    if docker ps --filter status=running --format '{{.Names}}' | grep -q ^${name}$ ; then
+      echo "UP on port ${APP_PORT}"
       return
     else
       sleep 0.2
     fi
   done
-  echo "${1} not up after 2 seconds"
-  docker logs "${1}"
+  echo "NOT up on port ${APP_PORT} after 2 seconds"
+  docker logs "${name}"
+  exit 1
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+wait_till_web_server_is_ready()
+{
+  local name=${APP_CONTAINER}
+  local n=10
+  while [ $(( n -= 1 )) -ge 0 ]
+  do
+    if curl --fail -X GET "http://${IP}:${APP_PORT}/ready" &> /dev/null; then
+      echo "READY on port ${APP_PORT}"
+      return
+    else
+      sleep 0.2
+    fi
+  done
+  echo "NOT ready on ${APP_PORT} after 2 seconds"
+  docker logs "${name}"
   exit 1
 }
 
@@ -32,25 +55,5 @@ docker run \
   --env APP_PORT=${APP_PORT} \
     ${DOCKER_REGISTRY_URL}/${APP_IMAGE}
 
-# This is the container up...
-wait_till_up ${APP_CONTAINER}
-
-# But it might not be ready yet.
-# Crude readyness test is good enough for now...
-sleep 2
-
-
-# replace this sleep with a structure similar to wait_till_up() above
-# but instead of looping around the [docker ps]
-# loop around a /ready curl
-
-
-
-
-
-
-
-
-
-
-
+wait_till_container_is_up
+wait_till_web_server_is_ready

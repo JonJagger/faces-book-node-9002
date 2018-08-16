@@ -17,6 +17,6 @@ show_use()
 show_use
 ${MY_DIR}/docker_build.sh
 ${MY_DIR}/container_down.sh
-${MY_DIR}/container_up.sh
+${MY_DIR}/container_up.sh $*
 ${MY_DIR}/container_logs.sh
 ${MY_DIR}/ci_smoke_tests.sh $*

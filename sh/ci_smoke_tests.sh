@@ -31,7 +31,6 @@ curl_route "/identity"
 
 echo "faces-book: Checking routes are 200..."
 curl_route "/"
-curl_route "/ready"
 curl_route "/index"
 curl_route "/years"
 curl_route "/faces?year=2017"
