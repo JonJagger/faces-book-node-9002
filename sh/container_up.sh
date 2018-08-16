@@ -11,9 +11,7 @@ readonly IP=${1:-localhost}
 wait_till_docker_container_is_up()
 {
   local name=${APP_CONTAINER}
-  local n=10
-  while [ $(( n -= 1 )) -ge 0 ]
-  do
+  for i in {1..10}; do
     if docker ps --filter status=running --format '{{.Names}}' | grep -q ^${name}$ ; then
       echo "UP on port ${APP_PORT}"
       return
@@ -31,9 +29,7 @@ wait_till_docker_container_is_up()
 wait_till_web_server_is_ready()
 {
   local name=${APP_CONTAINER}
-  local n=10
-  while [ $(( n -= 1 )) -ge 0 ]
-  do
+  for i in {1..10}; do
     if curl --fail -X GET "http://${IP}:${APP_PORT}/ready" &> /dev/null; then
       echo "READY on port ${APP_PORT}"
       return
