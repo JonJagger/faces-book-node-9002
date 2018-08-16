@@ -12,7 +12,7 @@ wait_till_up() # $1==container_name
   while [ $(( n -= 1 )) -ge 0 ]
   do
     if docker ps --filter status=running --format '{{.Names}}' | grep -q ^${1}$ ; then
-      echo "Up on port ${PORT}"
+      echo "Up on port ${APP_PORT}"
       return
     else
       sleep 0.2
