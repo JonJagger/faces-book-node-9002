@@ -34,6 +34,23 @@ docker run \
 
 # This is the container up...
 wait_till_up ${APP_CONTAINER}
+
 # But it might not be ready yet.
 # Crude readyness test is good enough for now...
 sleep 2
+
+
+# replace this sleep with a structure similar to wait_till_up() above
+# but instead of looping around the [docker ps]
+# loop around a /ready curl
+
+
+
+
+
+
+
+
+
+
+

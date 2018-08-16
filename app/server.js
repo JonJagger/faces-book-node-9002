@@ -30,7 +30,7 @@ app.get("/test", (req,res) => {
   res.json({runTests:runTests()});
 });
 
-app.get("/identity", (req,res) => {
+app.get(["/ready", "/identity"], (req,res) => {
   res.json({
     url:fs.readFileSync("repo.url.txt", "utf8").trim(),
     sha:fs.readFileSync("repo.sha.txt", "utf8").trim()
