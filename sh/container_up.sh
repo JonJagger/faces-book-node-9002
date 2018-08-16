@@ -8,7 +8,7 @@ readonly IP=${1:-localhost}
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-wait_till_container_is_up()
+wait_till_docker_container_is_up()
 {
   local name=${APP_CONTAINER}
   local n=10
@@ -22,7 +22,7 @@ wait_till_container_is_up()
     fi
   done
   echo "NOT up on port ${APP_PORT} after 2 seconds"
-  docker logs "${name}"
+  ${MY_DIR}/container_logs.sh
   exit 1
 }
 
@@ -41,8 +41,8 @@ wait_till_web_server_is_ready()
       sleep 0.2
     fi
   done
-  echo "NOT ready on ${APP_PORT} after 2 seconds"
-  docker logs "${name}"
+  echo "NOT ready on port ${APP_PORT} after 2 seconds"
+  ${MY_DIR}/container_logs.sh
   exit 1
 }
 
@@ -55,5 +55,5 @@ docker run \
   --env APP_PORT=${APP_PORT} \
     ${DOCKER_REGISTRY_URL}/${APP_IMAGE}
 
-wait_till_container_is_up
+wait_till_docker_container_is_up
 wait_till_web_server_is_ready
