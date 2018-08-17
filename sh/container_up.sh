@@ -10,17 +10,16 @@ readonly IP=${1:-localhost}
 
 wait_till_docker_container_is_up()
 {
-  local name=${APP_CONTAINER}
-  for i in {1..10}; do
-    if docker ps --filter status=running --format '{{.Names}}' | grep -q ^${name}$ ; then
+  for i in {1..20}; do
+    if docker ps --filter status=running --format '{{.Names}}' | grep -q ^${APP_CONTAINER}$ ; then
       echo "UP on port ${APP_PORT}"
       return
     else
-      sleep 0.2
+      echo -n '.'
+      sleep 0.1
     fi
   done
-  echo "NOT up on port ${APP_PORT} after 2 seconds"
-  ${MY_DIR}/container_logs.sh
+  echo "NOT up on port ${APP_PORT}"
   exit 1
 }
 
@@ -28,16 +27,16 @@ wait_till_docker_container_is_up()
 
 wait_till_web_server_is_ready()
 {
-  local name=${APP_CONTAINER}
-  for i in {1..10}; do
+  for i in {1..20}; do
     if curl --fail -X GET "http://${IP}:${APP_PORT}/ready" &> /dev/null; then
       echo "READY on port ${APP_PORT}"
       return
     else
-      sleep 0.2
+      echo -n '.'
+      sleep 0.1
     fi
   done
-  echo "NOT ready on port ${APP_PORT} after 2 seconds"
+  echo "NOT ready on port ${APP_PORT}"
   ${MY_DIR}/container_logs.sh
   exit 1
 }
